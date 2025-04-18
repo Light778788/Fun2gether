@@ -118,15 +118,34 @@ export default function WatchParty() {
   if (error) {
     return (
       <div className="container mx-auto p-4 flex justify-center items-center min-h-screen">
-        <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full text-center">
-          <div className="text-red-500 text-5xl mb-4">😕</div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Oops! {error}</h2>
-          <p className="text-gray-600 mb-6">The room you're trying to access may not exist anymore or has been closed by the host.</p>
-          <Link to="/" className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-6 rounded-lg transition duration-200">
-            Back to Home
-          </Link>
+      <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full text-center">
+        {/* <div className="text-red-500 text-6xl mb-4">😕</div> */}
+        
+        {/* Fallback content in case image fails to load */}
+        <div className="mb-6 flex justify-center">
+          <img 
+            src="/notfound.svg" 
+            alt="Not Found Illustration" 
+            className="max-w-full h-auto max-h-60"
+            onError={(e) => {
+              e.target.style.display = 'none';
+              // You could optionally replace with a different image or icon
+            }} 
+          />
         </div>
+        
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">Oops! {error}</h2>
+        <p className="text-gray-600 mb-6">
+          The room you're trying to access may not exist anymore or has been closed by the host.
+        </p>
+        <Link 
+          to="/" 
+          className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-6 rounded-lg transition duration-200"
+        >
+          Back to Home
+        </Link>
       </div>
+    </div>
     );
   }
 

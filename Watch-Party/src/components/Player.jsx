@@ -8,11 +8,18 @@ export default function Player({ videoId, isHost, roomId }) {
   const [playerReady, setPlayerReady] = useState(false);
   const syncing = useRef(false);
 
+  // Initialize YouTube player when the API is loaded
   const loadYTPlayer = () => {
     player.current = new window.YT.Player(playerRef.current, {
-        height: '100%',
-        width: '100%',
+      height: '100%',
+      width: '100%',
       videoId,
+      playerVars: {
+        // Disable controls for non-host users
+        controls: isHost ? 1 : 0,
+        disablekb: isHost ? 0 : 1, // Disable keyboard controls for non-hosts
+        modestbranding: 1,
+      },
       events: {
         onReady: () => setPlayerReady(true),
         onStateChange: (event) => {
@@ -24,6 +31,7 @@ export default function Player({ videoId, isHost, roomId }) {
   };
 
   useEffect(() => {
+    // Dynamically load YouTube Iframe API
     if (!window.YT) {
       const tag = document.createElement('script');
       tag.src = 'https://www.youtube.com/iframe_api';
@@ -38,7 +46,7 @@ export default function Player({ videoId, isHost, roomId }) {
         player.current.destroy();
       }
     };
-  }, [videoId]);
+  }, [videoId, isHost]); // Added isHost to dependencies to recreate player when host status changes
 
   const handleHostStateChange = async (event) => {
     const roomRef = doc(db, 'rooms', roomId);
@@ -61,7 +69,7 @@ export default function Player({ videoId, isHost, roomId }) {
     }
   };
 
-  // Listen to Firestore as guest (or host if needed)
+  // Listen to Firestore updates for synced video control
   useEffect(() => {
     if (!roomId || !playerReady) return;
 
@@ -73,15 +81,15 @@ export default function Player({ videoId, isHost, roomId }) {
 
       const { status, timestamp, lastUpdated } = data;
 
-      // Skip if host (they trigger updates themselves)
+      // Skip updates for host, as they control the state
       if (isHost) return;
 
-      // Calculate how much time passed since update
-      const delay = (Date.now() - lastUpdated) / 1000;
+      const delay = (Date.now() - lastUpdated) / 1000; // Time delay in seconds
       const syncedTime = timestamp + delay;
 
       syncing.current = true;
 
+      // Sync playback state based on the host's status
       if (status === 'play') {
         player.current.seekTo(syncedTime, true);
         player.current.playVideo();
@@ -92,18 +100,18 @@ export default function Player({ videoId, isHost, roomId }) {
         player.current.pauseVideo();
       }
 
+      // Reset syncing state after a short delay to avoid triggering multiple updates
       setTimeout(() => {
         syncing.current = false;
-      }, 500); // prevent loop triggers
+      }, 500);
     });
 
     return () => unsub();
-  }, [roomId, playerReady]);
+  }, [roomId, playerReady, isHost]);
 
-  return <div className="w-full h-full">
-  <div 
-    ref={playerRef} 
-    className="w-full h-full"
-  />
-</div>;
+  return (
+    <div className="w-full h-full">
+      <div ref={playerRef} className="w-full h-full"></div>
+    </div>
+  );
 }
