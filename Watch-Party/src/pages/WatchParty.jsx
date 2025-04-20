@@ -5,6 +5,8 @@ import { doc, getDoc, onSnapshot, updateDoc, deleteDoc } from 'firebase/firestor
 import { db } from '../firebase/config';
 import Player from '../components/Player';
 import ChatBox from '../components/ChatBox';
+import VoiceChat from '../components/VoiceChat';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 export default function WatchParty() {
   const { roomId } = useParams();
@@ -18,6 +20,7 @@ export default function WatchParty() {
   const [error, setError] = useState(null);
   const [copySuccess, setCopySuccess] = useState(false);
   const [roomIdCopied, setRoomIdCopied] = useState(false);
+  const [showVoiceChat, setShowVoiceChat] = useState(false);
 
   useEffect(() => {
     if (!roomId) {
@@ -36,7 +39,7 @@ export default function WatchParty() {
       }
 
       const data = docSnap.data();
-      setVideoId(data.videoId);
+      setVideoId(data.videoId || '');
       setIsHost(data.hostId === currentUser?.uid);
       setRoomData(data);
     }, (err) => {
@@ -48,15 +51,14 @@ export default function WatchParty() {
     return () => unsubscribe();
   }, [roomId, currentUser]);
 
-  // Optional: update activity timestamp
   useEffect(() => {
     const interval = setInterval(() => {
       if (roomId && currentUser) {
         updateDoc(doc(db, 'rooms', roomId), {
-          lastActive: Date.now()
+          lastActive: new Date()
         }).catch(err => console.error("Activity update error", err));
       }
-    }, 60000); // every minute
+    }, 60000);
 
     return () => clearInterval(interval);
   }, [roomId, currentUser]);
@@ -104,6 +106,10 @@ export default function WatchParty() {
     }
   };
 
+  const toggleVoiceChat = () => {
+    setShowVoiceChat(!showVoiceChat);
+  };
+
   if (loading) {
     return (
       <div className="container mx-auto p-4 flex justify-center items-center min-h-screen">
@@ -118,34 +124,29 @@ export default function WatchParty() {
   if (error) {
     return (
       <div className="container mx-auto p-4 flex justify-center items-center min-h-screen">
-      <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full text-center">
-        {/* <div className="text-red-500 text-6xl mb-4">😕</div> */}
-        
-        {/* Fallback content in case image fails to load */}
-        <div className="mb-6 flex justify-center">
-          <img 
-            src="/notfound.svg" 
-            alt="Not Found Illustration" 
-            className="max-w-full h-auto max-h-60"
-            onError={(e) => {
-              e.target.style.display = 'none';
-              // You could optionally replace with a different image or icon
-            }} 
-          />
+        <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full text-center">
+          <div className="mb-6 flex justify-center">
+            <img 
+              src="/notfound.svg" 
+              alt="Not Found Illustration" 
+              className="max-w-full h-auto max-h-60"
+              onError={(e) => {
+                e.target.style.display = 'none';
+              }} 
+            />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Oops! {error}</h2>
+          <p className="text-gray-600 mb-6">
+            The room you're trying to access may not exist anymore or has been closed by the host.
+          </p>
+          <Link 
+            to="/" 
+            className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-6 rounded-lg transition duration-200"
+          >
+            Back to Home
+          </Link>
         </div>
-        
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Oops! {error}</h2>
-        <p className="text-gray-600 mb-6">
-          The room you're trying to access may not exist anymore or has been closed by the host.
-        </p>
-        <Link 
-          to="/" 
-          className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-6 rounded-lg transition duration-200"
-        >
-          Back to Home
-        </Link>
       </div>
-    </div>
     );
   }
 
@@ -164,54 +165,37 @@ export default function WatchParty() {
               onClick={copyRoomId}
               className={`flex items-center text-sm ${roomIdCopied ? 'bg-green-100 text-green-800' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'} px-3 py-1 rounded transition duration-200`}
             >
-              {roomIdCopied ? (
-                <>
-                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  Copied!
-                </>
-              ) : (
-                <>
-                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                  </svg>
-                  Copy Room ID
-                </>
-              )}
+              {roomIdCopied ? '✓ Copied!' : 'Copy Room ID'}
             </button>
             <button 
               onClick={copyRoomLink}
               className={`flex items-center text-sm ${copySuccess ? 'bg-green-100 text-green-800' : 'bg-indigo-100 hover:bg-indigo-200 text-indigo-700'} px-3 py-1 rounded transition duration-200`}
             >
-              {copySuccess ? (
-                <>
-                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  Copied!
-                </>
-              ) : (
-                <>
-                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                  </svg>
-                  Invite Friends
-                </>
-              )}
+              {copySuccess ? '✓ Copied!' : 'Invite Friends'}
             </button>
           </div>
         </div>
         <div className="flex items-center text-gray-600 text-sm">
-          Room ID: 
-          <span className="font-mono bg-gray-100 px-2 py-1 rounded ml-1 mr-2">{roomId}</span>
+          Room ID: <span className="font-mono bg-gray-100 px-2 py-1 rounded ml-1 mr-2">{roomId}</span>
+          {/* <button 
+            onClick={toggleVoiceChat}
+            className={`text-sm ${showVoiceChat ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-700'} px-3 py-1 rounded transition`}
+          >
+            {showVoiceChat ? 'Hide Voice Chat' : 'Show Voice Chat'}
+          </button> */}
         </div>
       </div>
+
+   
+        <ErrorBoundary>
+          <VoiceChat roomId={roomId} currentUser={currentUser} />
+        </ErrorBoundary>
+    
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           {videoId ? (
-           <div className="bg-black rounded-lg overflow-hidden shadow-lg aspect-video w-full">
+            <div className="bg-black rounded-lg overflow-hidden shadow-lg aspect-video w-full">
               <Player videoId={videoId} isHost={isHost} roomId={roomId} />
               <div className="bg-gray-900 text-white p-3 text-sm">
                 {isHost ? (
@@ -233,20 +217,16 @@ export default function WatchParty() {
             </div>
           ) : (
             <div className="bg-gray-100 rounded-lg p-12 flex items-center justify-center h-64">
-              <p className="text-gray-500">Loading video...</p>
+              <p className="text-gray-500">No video selected</p>
             </div>
           )}
 
-          {/* Buttons */}
           <div className="mt-4 flex gap-4">
             {isHost ? (
               <button 
                 onClick={endParty} 
                 className="flex items-center bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition"
               >
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
                 End Party for Everyone
               </button>
             ) : (
@@ -254,16 +234,12 @@ export default function WatchParty() {
                 onClick={exitParty} 
                 className="flex items-center bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded transition"
               >
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
                 Leave Party
               </button>
             )}
           </div>
         </div>
 
-        {/* Chat */}
         <div className="h-full">
           <div className="bg-white rounded-lg shadow-sm h-full flex flex-col">
             <div className="bg-indigo-700 text-white py-2 px-4 rounded-t-lg">
@@ -276,12 +252,8 @@ export default function WatchParty() {
         </div>
       </div>
 
-      {/* Back Link */}
       <div className="mt-6 text-center">
         <Link to="/" className="text-indigo-600 hover:text-indigo-800 text-sm flex items-center justify-center">
-          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-          </svg>
           Back to Home
         </Link>
       </div>
