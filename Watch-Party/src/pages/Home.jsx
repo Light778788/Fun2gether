@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { addDoc, collection } from 'firebase/firestore';
 import { db } from '../firebase/config';
+import Recommended from './Recomended';
 
 export default function Home() {
   const { currentUser } = useAuth();
@@ -121,6 +122,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <Recommended/>
       
       {/* Features Section */}
       <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
