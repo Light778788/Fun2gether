@@ -112,10 +112,10 @@ export default function WatchParty() {
 
   if (loading) {
     return (
-      <div className="container mx-auto p-4 flex justify-center items-center min-h-screen">
+      <div className="container mx-auto p-4 flex justify-center items-center min-h-screen bg-white dark:bg-gray-900">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mx-auto"></div>
-          <p className="mt-4 text-lg text-gray-600">Loading your watch party...</p>
+          <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">Loading your watch party...</p>
         </div>
       </div>
     );
@@ -123,8 +123,8 @@ export default function WatchParty() {
 
   if (error) {
     return (
-      <div className="container mx-auto p-4 flex justify-center items-center min-h-screen">
-        <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full text-center">
+      <div className="container mx-auto p-4 flex justify-center items-center min-h-screen bg-white dark:bg-gray-900">
+        <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md max-w-md w-full text-center">
           <div className="mb-6 flex justify-center">
             <img 
               src="/notfound.svg" 
@@ -135,8 +135,8 @@ export default function WatchParty() {
               }} 
             />
           </div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Oops! {error}</h2>
-          <p className="text-gray-600 mb-6">
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">Oops! {error}</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
             The room you're trying to access may not exist anymore or has been closed by the host.
           </p>
           <Link 
@@ -151,53 +151,45 @@ export default function WatchParty() {
   }
 
   return (
-    <div className="container mx-auto p-4 max-w-7xl">
-      <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+    <div className="container mx-auto p-4 max-w-7xl bg-white dark:bg-gray-900">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-2">
-          <h1 className="text-2xl font-bold text-indigo-900">Fun2gether Watch Party</h1>
+          <h1 className="text-2xl font-bold text-indigo-900 dark:text-indigo-300">Fun2gether Watch Party</h1>
           <div className="flex items-center mt-2 md:mt-0 space-x-2">
             {isHost && (
-              <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+              <span className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs px-2 py-1 rounded">
                 Host Mode
               </span>
             )}
             <button 
               onClick={copyRoomId}
-              className={`flex items-center text-sm ${roomIdCopied ? 'bg-green-100 text-green-800' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'} px-3 py-1 rounded transition duration-200`}
+              className={`flex items-center text-sm ${roomIdCopied ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200'} px-3 py-1 rounded transition duration-200`}
             >
               {roomIdCopied ? '✓ Copied!' : 'Copy Room ID'}
             </button>
             <button 
               onClick={copyRoomLink}
-              className={`flex items-center text-sm ${copySuccess ? 'bg-green-100 text-green-800' : 'bg-indigo-100 hover:bg-indigo-200 text-indigo-700'} px-3 py-1 rounded transition duration-200`}
+              className={`flex items-center text-sm ${copySuccess ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' : 'bg-indigo-100 dark:bg-indigo-900 hover:bg-indigo-200 dark:hover:bg-indigo-800 text-indigo-700 dark:text-indigo-200'} px-3 py-1 rounded transition duration-200`}
             >
               {copySuccess ? '✓ Copied!' : 'Invite Friends'}
             </button>
           </div>
         </div>
-        <div className="flex items-center text-gray-600 text-sm">
-          Room ID: <span className="font-mono bg-gray-100 px-2 py-1 rounded ml-1 mr-2">{roomId}</span>
-          {/* <button 
-            onClick={toggleVoiceChat}
-            className={`text-sm ${showVoiceChat ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-700'} px-3 py-1 rounded transition`}
-          >
-            {showVoiceChat ? 'Hide Voice Chat' : 'Show Voice Chat'}
-          </button> */}
+        <div className="flex items-center text-gray-600 dark:text-gray-400 text-sm">
+          Room ID: <span className="font-mono bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded ml-1 mr-2">{roomId}</span>
         </div>
       </div>
 
-   
-        <ErrorBoundary>
-          <VoiceChat roomId={roomId} currentUser={currentUser} />
-        </ErrorBoundary>
-    
+      <ErrorBoundary>
+        <VoiceChat roomId={roomId} currentUser={currentUser} />
+      </ErrorBoundary>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           {videoId ? (
             <div className="bg-black rounded-lg overflow-hidden shadow-lg aspect-video w-full">
               <Player videoId={videoId} isHost={isHost} roomId={roomId} />
-              <div className="bg-gray-900 text-white p-3 text-sm">
+              <div className="bg-gray-900 dark:bg-gray-800 text-white dark:text-gray-200 p-3 text-sm">
                 {isHost ? (
                   <p className="flex items-center">
                     <svg className="w-4 h-4 mr-2 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -216,8 +208,8 @@ export default function WatchParty() {
               </div>
             </div>
           ) : (
-            <div className="bg-gray-100 rounded-lg p-12 flex items-center justify-center h-64">
-              <p className="text-gray-500">No video selected</p>
+            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-12 flex items-center justify-center h-64">
+              <p className="text-gray-500 dark:text-gray-400">No video selected</p>
             </div>
           )}
 
@@ -232,7 +224,7 @@ export default function WatchParty() {
             ) : (
               <button 
                 onClick={exitParty} 
-                className="flex items-center bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded transition"
+                className="flex items-center bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 px-4 py-2 rounded transition"
               >
                 Leave Party
               </button>
@@ -241,8 +233,8 @@ export default function WatchParty() {
         </div>
 
         <div className="h-full">
-          <div className="bg-white rounded-lg shadow-sm h-full flex flex-col">
-            <div className="bg-indigo-700 text-white py-2 px-4 rounded-t-lg">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm h-full flex flex-col">
+            <div className="bg-indigo-700 dark:bg-indigo-900 text-white py-2 px-4 rounded-t-lg">
               <h2 className="font-semibold">Live Chat</h2>
             </div>
             <div className="flex-grow overflow-hidden">
@@ -253,7 +245,7 @@ export default function WatchParty() {
       </div>
 
       <div className="mt-6 text-center">
-        <Link to="/" className="text-indigo-600 hover:text-indigo-800 text-sm flex items-center justify-center">
+        <Link to="/" className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 text-sm flex items-center justify-center">
           Back to Home
         </Link>
       </div>

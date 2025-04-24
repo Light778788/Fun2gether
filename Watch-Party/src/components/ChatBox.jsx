@@ -14,10 +14,9 @@ export default function ChatBox({ roomId, currentUser }) {
   const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef(null);
 
-  // Get optimized photo URL without modifying Google URLs
   const getPhotoURL = (user) => {
     if (user?.photoURL) {
-      return user.photoURL; // Keep original URL exactly as is
+      return user.photoURL;
     }
     return `https://ui-avatars.com/api/?name=${user?.email?.[0] || 'U'}`;
   };
@@ -32,8 +31,7 @@ export default function ChatBox({ roomId, currentUser }) {
       const msgs = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-        // Ensure photoURL exists in the data
-        photoURL: doc.data().photoURL || getPhotoURL({ email: doc.data().uid }) // Fallback if missing
+        photoURL: doc.data().photoURL || getPhotoURL({ email: doc.data().uid }),
       }));
       setMessages(msgs);
     });
@@ -49,7 +47,6 @@ export default function ChatBox({ roomId, currentUser }) {
     e.preventDefault();
     if (!newMessage.trim() || !roomId || !currentUser) return;
 
-    // Use currentUser's photoURL directly
     const photoURL = currentUser.photoURL || 
       `https://ui-avatars.com/api/?name=${currentUser.email?.[0] || 'U'}`;
 
@@ -57,7 +54,7 @@ export default function ChatBox({ roomId, currentUser }) {
       uid: currentUser.uid,
       message: newMessage,
       displayName: currentUser.displayName || currentUser.email,
-      photoURL: photoURL, // Store the direct URL
+      photoURL: photoURL,
       timestamp: serverTimestamp(),
     });
 
@@ -65,13 +62,13 @@ export default function ChatBox({ roomId, currentUser }) {
   };
 
   return (
-    <div className="border rounded p-4 shadow-md bg-white flex flex-col h-[500px]">
+    <div className="border rounded p-4 shadow-md bg-white dark:bg-gray-800 flex flex-col h-[500px]">
       <div className="flex-1 overflow-y-auto pr-2 space-y-4">
         {messages.map((msg) => {
           const isCurrentUser = msg.uid === currentUser?.uid;
           const displayName = msg.displayName || msg.email || 'User';
           const avatarName = displayName[0].toUpperCase();
-          
+
           return (
             <div
               key={msg.id}
@@ -90,11 +87,13 @@ export default function ChatBox({ roomId, currentUser }) {
                   }}
                 />
               )}
-              <div className={`max-w-xs break-words px-4 py-2 rounded-lg shadow text-sm ${
-                isCurrentUser
-                  ? 'bg-blue-500 text-white rounded-br-none'
-                  : 'bg-gray-100 text-gray-800 rounded-bl-none'
-              }`}>
+              <div
+                className={`max-w-xs break-words px-4 py-2 rounded-lg shadow text-sm ${
+                  isCurrentUser
+                    ? 'bg-blue-500 text-white rounded-br-none'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-bl-none'
+                }`}
+              >
                 {!isCurrentUser && (
                   <div className="font-semibold text-xs mb-1">
                     {displayName}
@@ -124,7 +123,7 @@ export default function ChatBox({ roomId, currentUser }) {
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          className="flex-1 border rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-400"
+          className="flex-1 border rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-400 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:focus:ring-blue-500"
           placeholder="Type a message..."
         />
         <button

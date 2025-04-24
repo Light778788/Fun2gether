@@ -26,18 +26,18 @@ export default function Login() {
   };
   
   return (
-    <div className="flex flex-col-reverse md:flex-row max-w-4xl mx-auto bg-white rounded-lg shadow-md mt-10 overflow-hidden">
+    <div className="flex flex-col-reverse md:flex-row max-w-4xl mx-auto bg-white dark:bg-gray-900 rounded-lg shadow-md mt-10 overflow-hidden">
       {/* Login Form - Now on the left on medium screens and up */}
       <div className="w-full md:w-1/2 p-6">
-        <h2 className="text-2xl font-bold mb-6 text-center">Log In</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800 dark:text-gray-200">Log In</h2>
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <div className="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-300 px-4 py-3 rounded mb-4">
             {error}
           </div>
         )}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2" htmlFor="email">
+            <label className="block text-gray-700 dark:text-gray-300 mb-2" htmlFor="email">
               Email
             </label>
             <input
@@ -45,12 +45,12 @@ export default function Login() {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 focus:outline-none focus:ring focus:border-blue-400 dark:focus:ring-blue-500"
               required
             />
           </div>
           <div className="mb-6">
-            <label className="block text-gray-700 mb-2" htmlFor="password">
+            <label className="block text-gray-700 dark:text-gray-300 mb-2" htmlFor="password">
               Password
             </label>
             <input
@@ -58,21 +58,21 @@ export default function Login() {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 focus:outline-none focus:ring focus:border-blue-400 dark:focus:ring-blue-500"
               required
             />
           </div>
           <button
             disabled={loading}
             type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded"
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded transition duration-300"
           >
             {loading ? 'Logging In...' : 'Log In'}
           </button>
           <div className="flex items-center my-4">
-            <hr className="flex-grow border-t border-gray-300" />
-            <span className="mx-2 text-gray-500">or</span>
-            <hr className="flex-grow border-t border-gray-300" />
+            <hr className="flex-grow border-t border-gray-300 dark:border-gray-600" />
+            <span className="mx-2 text-gray-500 dark:text-gray-400">or</span>
+            <hr className="flex-grow border-t border-gray-300 dark:border-gray-600" />
           </div>
           <button
             onClick={async () => {
@@ -86,16 +86,16 @@ export default function Login() {
               }
               setLoading(false);
             }}
-            className="flex items-center justify-center w-full border py-2 mt-2 rounded hover:bg-gray-100"
+            className="flex items-center justify-center w-full border py-2 mt-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 dark:bg-gray-800 dark:text-gray-200"
           >
             <FcGoogle className="mr-2 text-xl" />
             Continue with Google
           </button>
         </form>
         <div className="mt-4 text-center">
-          <p>
+          <p className="text-gray-600 dark:text-gray-400">
             Need an account?{' '}
-            <Link to="/signup" className="text-blue-500 hover:text-blue-700">
+            <Link to="/signup" className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">
               Sign Up
             </Link>
           </p>

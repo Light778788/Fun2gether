@@ -347,14 +347,14 @@ export default function VoiceChat({ roomId, currentUser }) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 mb-6">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6">
       <audio ref={remoteAudio} autoPlay controls={false} hidden />
       
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">Voice Chat</h3>
+        <h3 className="text-lg font-semibold text-gray-800  dark:text-gray-200">Voice Chat</h3>
         <div className="flex items-center">
           <span className={`inline-flex h-2 w-2 mr-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></span>
-          <span className="text-sm text-gray-600">{isConnected ? 'Connected' : 'Connecting...'}</span>
+          <span className="text-sm text-gray-600 dark:text-gray-400">{isConnected ? 'Connected' : 'Connecting...'}</span>
         </div>
       </div>
       
@@ -379,14 +379,14 @@ export default function VoiceChat({ roomId, currentUser }) {
               </div>
             )}
             {isMuted && (
-              <div className="absolute -top-1 -right-1 bg-white p-0.5 rounded-full shadow-sm">
+              <div className="absolute -top-1 -right-1 bg-white p-0.5 rounded-full shadow-sm dark:bg-gray-800">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-red-500" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M5.47 5.47a.75.75 0 011.06 0L10 8.94l3.47-3.47a.75.75 0 111.06 1.06L11.06 10l3.47 3.47a.75.75 0 01-1.06 1.06L10 11.06l-3.47 3.47a.75.75 0 01-1.06-1.06L8.94 10 5.47 6.53a.75.75 0 010-1.06z" clipRule="evenodd" />
                 </svg>
               </div>
             )}
           </div>
-          <span className="block text-xs text-center mt-1 text-gray-600 font-medium">
+          <span className="block text-xs text-center mt-1 text-gray-600 font-medium dark:text-gray-400">
             You
           </span>
         </div>
@@ -412,14 +412,14 @@ export default function VoiceChat({ roomId, currentUser }) {
                 </div>
               )}
               {participant.muted && (
-                <div className="absolute -top-1 -right-1 bg-white p-0.5 rounded-full shadow-sm">
+                <div className="absolute -top-1 -right-1 bg-white p-0.5 rounded-full shadow-sm dark:bg-gray-800">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-red-500" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M5.47 5.47a.75.75 0 011.06 0L10 8.94l3.47-3.47a.75.75 0 111.06 1.06L11.06 10l3.47 3.47a.75.75 0 01-1.06 1.06L10 11.06l-3.47 3.47a.75.75 0 01-1.06-1.06L8.94 10 5.47 6.53a.75.75 0 010-1.06z" clipRule="evenodd" />
                   </svg>
                 </div>
               )}
             </div>
-            <span className="block text-xs text-center mt-1 text-gray-600 font-medium max-w-16 truncate">
+            <span className="block text-xs text-center mt-1 text-gray-600 font-medium max-w-16 truncate dark:text-gray-400">
               {participant.displayName.split(' ')[0]}
             </span>
           </div>
